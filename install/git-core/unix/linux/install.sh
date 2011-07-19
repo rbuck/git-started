@@ -39,7 +39,7 @@ fi
 
 # upgrade the system and install required packages
 
-case "$VENDOR_TYPE" in
+case "$DISTRO_TYPE" in
   Debian)
     apt-get -y install git-core
     apt-get -y install git-email

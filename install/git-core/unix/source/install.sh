@@ -61,7 +61,7 @@ OPENSSL_VERSION=1.0.0d
 curl -o openssl-${OPENSSL_VERSION}.tar.gz http://www.openssl.org/source/openssl-${OPENSSL_VERSION}.tar.gz
 tar xzvf openssl-${OPENSSL_VERSION}.tar.gz
 pushd openssl-${OPENSSL_VERSION}
-  case "$VENDOR_TYPE" in
+  case "$DISTRO_TYPE" in
     Debian)
       ./Configure darwin64-x86_64-cc
       ;;

@@ -16,31 +16,35 @@ case "$MACHINE_TYPE" in
     ;;
 esac
 
+exists() {
+    WHAT="$1"
+    shift;
+    [[ -f "$WHAT" ]] && return 0  || return 1
+}
+
 KERNEL_TYPE=`uname -s`
 case "$KERNEL_TYPE" in
   Linux*)
     KERNEL_TYPE=Linux
-    VENDOR_TYPE=`lsb_release -i | sed 's/^.*:\s*//'`
-    case "$VENDOR_TYPE" in
-      Ubuntu*)
-        VENDOR_TYPE=Debian
+    if exists "/etc/redhat-release" ; then DISTRO_TYPE=RedHat ; fi 
+    if exists "/etc/debian_version" ; then DISTRO_TYPE=Debian ; fi 
+    case "$DISTRO_TYPE" in
+      Ubuntu* | Debian*)
         ;;
       CentOS* | RedHat*)
-        VENDOR_TYPE=RedHat
         ;;
       *)
-        echo "Unsupported vendor type $VENDOR_TYPE. Exiting."
+        echo "Unsupported vendor type $DISTRO_TYPE. Exiting."
         exit 2
         ;;
     esac
     ;;
   Darwin*)
     KERNEL_TYPE=Darwin
-    VENDOR_TYPE=Darwin
+    DISTRO_TYPE=Darwin
     ;;
   *)
     echo "Unsupported operating system type $KERNEL_TYPE. Exiting."
     exit 2
     ;;
 esac
-

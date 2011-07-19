@@ -39,26 +39,30 @@ fi
 
 # verify third-party directory is available
 
-export THIRD_PARTY=/opt/thirdparty/os_cpu/$KERNEL_TYPE/$MACHINE_TYPE
+export THIRD_PARTY=/opt/os_cpu/$KERNEL_TYPE/$MACHINE_TYPE
 if [ ! -d $THIRD_PARTY ]; then
   mkdir -p $THIRD_PARTY
 fi
 
 # install p4merge...
 
+PERFORCE_HOME=$THIRD_PARTY/perforce/2010.2
+WGET_BASE_DIR=http://www.perforce.com/downloads/perforce/r10.2
+EXPLODED_ROOT=p4v-2010.2.317255
+
 case "$KERNEL_TYPE" in
   Linux)
     case "$MACHINE_TYPE" in
       x86)
-        P4MERGE_WGET_URI=http://www.perforce.com/downloads/perforce/r10.1/bin.linux26x86/p4v.tgz
+        P4MERGE_WGET_URI=$WGET_BASE_DIR/bin.linux26x86/p4v.tgz
         ;;
       x86_64)
-        P4MERGE_WGET_URI=http://www.perforce.com/downloads/perforce/r10.1/bin.linux26x86_64/p4v.tgz
+        P4MERGE_WGET_URI=$WGET_BASE_DIR/bin.linux26x86_64/p4v.tgz
         ;;
     esac
     ;;
   Darwin)
-    P4MERGE_WGET_URI=http://www.perforce.com/downloads/perforce/r10.1/bin.macosx104u/P4V.dmg
+    P4MERGE_WGET_URI=$WGET_BASE_DIR/bin.macosx104u/P4V.dmg
     # must update this script to help here to install dmg from command line...
     # http://commandlinemac.blogspot.com/2008/12/installing-dmg-application-from-command.html
     echo "Please contribute back to this project; help needed for Mac. Research done, just need leg work."
@@ -70,7 +74,8 @@ case "$KERNEL_TYPE" in
     ;;
 esac
 
-if [ ! -d $THIRD_PARTY/perforce/2010.1 ]; then
+
+if [ ! -d $PERFORCE_HOME ]; then
   pushd /var/tmp
     if [ ! -f p4v.tgz ]; then
       wget -dc $P4MERGE_WGET_URI > /dev/null 2>&1
@@ -79,23 +84,23 @@ if [ ! -d $THIRD_PARTY/perforce/2010.1 ]; then
         exit 1
       fi
     else
-      if [ -d p4v-2010.1.256349 ]; then
-        rm -fr p4v-2010.1.256349
+      if [ -d $EXPLODED_ROOT ]; then
+        rm -fr $EXPLODED_ROOT
       fi
     fi
     tar xvfz p4v.tgz > /dev/null 2>&1
     if [ $? -ne 0 ]; then
       echo "Failed to unzip perforce merge tools; perhaps perforce is blocking wget downloads of p4v."
       echo "  Try downloading manually into /var/tmp and restart."
-      rm -fr rm -fr p4v-2010.1.256349
+      rm -fr rm -fr $EXPLODED_ROOT
       exit 1
     fi
-    pushd p4v-2010.1.256349 
-      mkdir -p $THIRD_PARTY/perforce/2010.1
+    pushd $EXPLODED_ROOT
+      mkdir -p $PERFORCE_HOME
       if [ -f $THIRD_PARTY/perforce/latest ]; then
         rm -f $THIRD_PARTY/perforce/latest
       fi
-      ln -s $THIRD_PARTY/perforce/2010.1 $THIRD_PARTY/perforce/latest
+      ln -s $PERFORCE_HOME $THIRD_PARTY/perforce/latest
       cp -r * $THIRD_PARTY/perforce/latest
       if [ -f /usr/local/bin/p4merge ]; then
         rm -f /usr/local/bin/p4merge
