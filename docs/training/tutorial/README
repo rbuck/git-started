@@ -1,0 +1,51 @@
+
+Tutorial Script:
+
+Agenda:
+
+1. Basic Operations
+
+In this installment simply have the developers run the setup script without
+discussing the details of what it exactly does. In a nutshell a "remote"
+repository (albeit on the local file system) is created whose name is 'repo'.
+Also two different developers repositories are created, 'paul' and 'mary'.
+
+Once they run the setup script walk them through each operation detailed in
+the 'basic' script.
+
+In this installment developers will learn about:
+
+* clone
+* status
+* add
+* commit
+* push
+* diff
+* difftool
+* gitk
+
+2. Fetching, Rebasing, and Merging Operations
+
+After developers have worked through the first installment, walk them through the
+commands detailed in the 'merge' script. The developers will be working in the
+'mary' repository.
+
+In this installment developers will learn about:
+
+* fetch
+* rebase
+* merge
+* mergetool
+
+3. Advanced Operations
+
+After developers have been fully prepared with the above material will they learn
+about the more advanced topics, whose commands are detailed in the 'setup' script.
+
+In this installment developers or release engineers will learn about:
+
+* init
+* init --bare
+* remote add
+* push (to remote refs)
+

@@ -1,0 +1,26 @@
+-------------------------------------------------------------------------------
+Subject: Git Configurations
+From: Robert Buck
+Date: 2011-07-19
+
+Contents:
+
+Several configuration setters for Git are provided in this directory:
+
+  set-gitignore-core.sh     - configures the global .gitignore file to ignore
+                              default patterns encountered
+
+  set-gitignore-eclipse.sh  - configures the global .gitignore file to ignore
+                              common eclipse files
+
+  set-gitignore-java.sh     - configures the global .gitignore file to ignore
+                              common java files
+
+  set-gitignore-maven.sh    - configures the global .gitignore file to ignore
+                              common maven files
+
+  set-gitignore-vstudio.sh  - configures the global .gitignore file to ignore
+                              visual studio files; for illustrative purposes
+                              only
+
+Java developers are strongly encouraged to run these set-gitignore-* scripts.

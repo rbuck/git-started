@@ -1,0 +1,28 @@
+-------------------------------------------------------------------------------
+Subject: Git Extras
+From: Robert Buck
+Date: 2011-07-19
+
+Contents:
+
+Several configuration setters for Git are provided in this directory:
+
+  install-p4merge.sh        - installs p4merge as the default diff and merge
+                              tool
+
+
+Perforce P4Merge
+
+Perforce p4merge is recommended for interactive merges; this tool is freely
+available from the web. Other merge and diff tools may be similarly configured
+but this one is written by a commercial company and the tool has the polish
+lacking in other tools. To install p4merge run the following script:
+
+  sudo ./install-p4merge.sh
+
+
+Other Recommended Extras:
+
+Contributors are requested to document scripts to set up the config files to
+support other diff and merge tools.
+

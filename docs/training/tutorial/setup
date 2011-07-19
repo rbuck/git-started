@@ -1,0 +1,62 @@
+#!/bin/sh
+
+# This training session covers how remote repositories are created and
+# initially populated (without specific details related to gitolite, the
+# centralized git server solution we use). Similar commands are used for
+# GitHub when initially seeding a shared repository.
+#
+# What you will learn in this training session:
+#
+#  - init vs `init --bare`
+#  - status
+#  - diff vs `diff --cached`
+#  - commit
+#  - remote add
+#  - push
+#  - clone
+#
+# Note that for the purposes of brevity we name our repositories as follows:
+#  hr - host 'r', for the remote repository
+#  hi - host 'i', for the initializing repository
+#  ha - host 'a', developer 'a'
+#  hb - host 'b', developer 'b'
+
+if [ -d hr ]; then
+  rm -fr hr
+fi
+mkdir hr
+(
+  cd hr
+  git init --bare
+)
+
+if [ -d hi ]; then
+  rm -fr hi
+fi
+mkdir hi
+(
+  cd hi
+  git init
+  echo "hello world" > README
+  git status
+  git diff
+  git add README
+  git status
+  git diff --cached
+  git commit -m "first commit"
+  git status
+  git remote add origin /home/rbuck/dev/tutorial/rebase/hr/
+  git push origin master
+)
+rm -fr hi
+
+if [ -d ha ]; then
+  rm -fr ha
+fi
+git clone hr ha
+
+if [ -d hb ]; then
+  rm -fr hb
+fi
+git clone hr hb
+

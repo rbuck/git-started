@@ -1,0 +1,28 @@
+#!/bin/sh
+
+# This training session covers typical daily commands used by developers.
+# These commands illustrate a change initiated by a developer which is later
+# pushed to the remote repository.
+#
+# What you will learn in this training session:
+#
+#  - status
+#  - diff
+#  - diff --cached
+#  - commit
+#  - push
+
+(
+  cd ha
+  ls
+  echo "hola world" > README 
+  git status
+  git diff
+  git add README 
+  git status
+  git diff --cached
+  git commit -m "hello to hola"
+  git status
+  git push
+)
+

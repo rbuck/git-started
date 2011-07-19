@@ -1,0 +1,116 @@
+
+Welcome to the wonderful world of Git!
+
+In this initiation packet you will find everything related to using Git for development
+This welcome packet contains items such as:
+
+* Training Materials
+* Presentations
+* Installation Scripts
+* FAQ's
+* Contact Information
+
+Before proceeding please take a moment to install and configure the tool chain
+by following the instructions below.
+
+
+Installation and Configuration
+
+Windows Client Installation
+
+For the Windows platform please consult the install/git-core/windows/README
+file for installation details for that platform. For the windows platform
+there is no option to build from the source code documented; there is an
+opportunity for a developer to contribute back to this project by providing
+build scripts and documentation on how to build Git and its related dependencies
+on the Windows platform.
+
+Unix Client Installation
+
+For Unix-based clients we suggest using the package managers build into these
+systems. Simplification wrappers are provided that insure that the correct set
+of packages and dependencies are installed for your specific system. To install
+Git and related dependencies execute the following command:
+
+  sudo install/git-core/unix/linux/install.sh
+
+For Unix-based clients there are recommended git-extras such as diff and merge
+tools for which simplification scripts have been written to install these
+automatically.
+
+Depending upon your development environment and tools used there are also
+recommended git-config files. Please consult this directory for a list of
+available configurations that you should consider setting. Note that mandatory
+configuration settings are established if you use the scripts provided, but
+extra settings for environments such as Java, Maven, and Eclipse will ensure
+that generated files are not unintentionally checked in. To install the common
+configuration required for Java development run the following scripts:
+
+  install/git-extras/set-gitignore-java.sh
+  install/git-extras/set-gitignore-maven.sh
+  install/git-extras/set-gitignore-eclipse.sh
+
+If you wish to use p4merge as your integrated diff and merge tool run the
+following script:
+
+  sudo install/git-extras/install-p4merge.sh
+
+
+Setting Your Email and UserName
+
+After installing Git run the following commands from your shell prompt:
+
+git config --global user.name "Full Name"
+git config --global user.email firstname.lastname@yourcompany.com
+
+On Windows there are GUI dialogs that enable you to set these, or for cygwin
+follow the same instructions as for Unix.
+
+
+Documents and Folders
+
+The following structure exists in this welcome packet, and described here are the
+contents of each folder:
+
+WELCOME             - this document
+CONTRIBUTE          - how to contribute back to this project to make things better
+docs/
+  faqs/             - where you go first if you have a question
+  manuals/
+    cheat-sheets/   - cheat-sheets developers may find useful
+    gitbook/        - the online git book, in both pdf and html forms
+    gitman/         - the git manual, in html and man forms
+    admins/         - the administrative and operational procedures
+  policies/         - branch naming policies
+  training/         - training materials
+  dailyuse/
+    contributors/   - a day in the life of a developer using git
+    lieutenants/    - a day in the life of a lieutenant using git
+    dictators/      - a day in the life of a dictator using git
+  hostspec/
+    BACKUP
+    HARDWARE
+    OS
+install/
+  README
+  git-core/
+    README
+    windows/
+      README        - details how to install git on windows
+    unix/
+      linux/
+        debian/     - scripted installs for git on debian/ubuntu
+        redhat/     - scripted installs for git on redhat/centos
+      mac/          - scripted installs for git on mac
+  git-extras/       - recommended extras for git
+    README
+  git-config/
+    README
+    git/
+    templates/
+  git-hosting/
+    README
+tests/
+  git-tests/        - scripts used to test git itself, thirteen test criteria
+
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++

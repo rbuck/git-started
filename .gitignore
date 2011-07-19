@@ -1,0 +1,6 @@
+# VI Ignores
+*.swp
+
+# Apple Ignores
+.DS_Store
+

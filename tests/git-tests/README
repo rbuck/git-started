@@ -1,0 +1,543 @@
+==============================================================
+
+-------------------------------------------
+Test Cases
+
+We will be using the Hello World ruby file example from the rerere documentation above.
+
+Nomenclature (hope this helps you understand the use cases):
+
+T     :: trunk
+A     :: branch a
+B     :: branch b
+Xn    :: n-th change on repository X
+(n,*) :: repeat steps from test case n
+B=T   :: create a branch B from trunk T
+M->N  :: merge from M to N
+
+Use Cases:
+
+[1] Create a branch from trunk:
+
+        T,A=T
+
+        Criteria:
+
+        * None
+
+	Test Regimen:
+
+		mkdir hello.git
+		cd hello.git
+		git init
+		cp ../hello.rb .
+		git add hello.rb
+		git commit -m "initial repository"
+		git branch branch-a
+
+[2] Merge simple change from trunk to branch:
+
+        (1),T1,T1->A1
+
+        Criteria:
+
+        * No interactive merge required
+
+	Test Regimen:
+
+		(1)
+		sed -i "s/hello world/hola world/g" hello.rb
+		git add hello.rb
+		git commit -m "changed to hola world"
+		git checkout branch-a
+		git merge master
+
+	Sample Output:
+
+		Updating 21f54a2..9f63cd5
+		Fast forward
+		 hello.rb |    2 +-
+		 1 files changed, 1 insertions(+), 1 deletions(-)
+
+[3] Merge simple change from branch to trunk
+
+        (1),A1,A1->T1
+
+        Criteria:
+
+        * No interactive merge required
+
+	Test Regimen:
+
+		(1)
+		git checkout branch-a
+		sed -i "s/hello world/hello mundo/g" hello.rb
+		git add hello.rb
+		git commit -m "changed to hello mundo"
+		git checkout master
+		git merge branch-a
+
+	Sample Output:
+
+		Updating 8c6cf4c..0e04029
+		Fast forward
+		 hello.rb |    2 +-
+		 1 files changed, 1 insertions(+), 1 deletions(-)
+
+[4] Merge simple change from branch to trunk, and then to alternate branch
+
+        (1,B=T),A1,A1->T1,T1->B1
+
+        Criteria:
+
+        * No interactive merge required
+
+	Test Regimen:
+
+		(1)
+		git branch branch-b
+		git checkout branch-a
+		sed -i "s/hello world/hello mundo/g" hello.rb
+		git add hello.rb
+		git commit -m "changed to hello mundo"
+		git checkout master
+		git merge branch-a
+		git checkout branch-b
+		git merge master
+
+	Sample Output:
+
+		Switched to branch 'branch-b'
+		Updating f8369de..b7fd629
+		Fast forward
+		 hello.rb |    2 +-
+		 1 files changed, 1 insertions(+), 1 deletions(-)
+
+[5] Merge simple change from branch to trunk, then to alternate branch, then lastly alternate branch to trunk
+
+        (4),B1->T1
+
+        Criteria:
+
+        * No interactive merge required
+        * Empty merge (or no merge required) from alternate branch to trunk
+
+	Test Regimen:
+
+		(4)
+		git checkout master
+		git merge branch-b
+
+	Sample Output:
+
+		Switched to branch 'branch-b'
+		Updating 71a5c64..3ead78d
+		Fast forward
+		 hello.rb |    2 +-
+		 1 files changed, 1 insertions(+), 1 deletions(-)
+		Switched to branch 'master'
+		Already up-to-date.   <<<< IMPORTANT
+
+[6] Non-conflicting identical simultaneous changes and merge (auto-resolve), A1 & B1 same
+
+        (1,B=T),A1,A1->T1,B1,T1->B1
+        (1,B=T),A1,A1->T1,B1,B1->T1
+
+        Criteria:
+
+        * No interactive merge required at last merge, should identify this as an auto-resolve candidate
+
+	Test Regimen:
+
+		(1)
+		git branch branch-b
+		git checkout branch-a
+		sed -i "s/hello world/hello mundo/g" hello.rb
+		git add hello.rb
+		git commit -m "changed to hello mundo"
+		git checkout master
+		git merge branch-a
+		git checkout branch-b
+		sed -i "s/hello world/hello mundo/g" hello.rb
+		git add hello.rb
+		git commit -m "changed to hello mundo"
+		git merge master
+
+		(1)
+		git branch branch-b
+		git checkout branch-a
+		sed -i "s/hello world/hello mundo/g" hello.rb
+		git add hello.rb
+		git commit -m "changed to hello mundo"
+		git checkout master
+		git merge branch-a
+		git checkout branch-b
+		sed -i "s/hello world/hello mundo/g" hello.rb
+		git add hello.rb
+		git commit -m "changed to hello mundo"
+		git checkout master
+		git merge branch-b
+		
+	Sample Output
+
+		...
+		Switched to branch 'branch-a'
+		[branch-a 09f9ad1] changed to hello mundo
+		 1 files changed, 1 insertions(+), 1 deletions(-)
+		Switched to branch 'master'
+		Updating 8631415..09f9ad1
+		Fast forward
+		 hello.rb |    2 +-
+		 1 files changed, 1 insertions(+), 1 deletions(-)
+		Switched to branch 'branch-b'
+		[branch-b 09f9ad1] changed to hello mundo
+		 1 files changed, 1 insertions(+), 1 deletions(-)
+		Switched to branch 'master'
+		Already up-to-date.    <<<<<<<< IMPORTANT
+
+[7] Conflicting simultaneous changes and merge (guided-resolve), A1 & B1 different
+
+        (1,B=T),A1,A1->T1,B1,T1->B1
+        (1,B=T),A1,A1->T1,B1,B1->T1
+
+        Criteria:
+
+		* Interactive merge required at last merge
+
+	Test Regimen:
+
+		(identical to 6 except second 'sed' command changes to hola world)
+
+	Sample Output:
+
+		Switched to branch 'master'
+		Auto-merging hello.rb
+		CONFLICT (content): Merge conflict in hello.rb
+		Automatic merge failed; fix conflicts and then commit the result.
+
+	Notes:
+
+		Follow the notes to properly set up p4merge as the merge tool.
+		To use the merge tool:
+
+			cd hello.git
+			git mergetool hello.rb # brings up interactive merge tool
+			git diff --cached . # shows all diffs plus diffs resulting from merges
+			git commit -m "merged from branch-a"
+
+		The output after the merge and from the commit will be:
+
+		Normal merge conflict for 'hello.rb':
+		  {local}: modified
+		  {remote}: modified
+		rbuck@SOIM0429:~/Desktop/Stuff/git-test/CentOS/test-scripts/hello.git$ git commit -m "merged"
+		Recorded resolution for 'hello.rb'.
+		[master 8dda0d6] merged
+
+[8] Deletion in both branches individually, and merge through trunk to alternate branch
+
+        (1,B=T),Ad,Bd,Ad->Td,Td->Bd
+
+        Criteria:
+
+        * System should auto-resolve without conflicts.
+
+	Test Regimen:
+
+		(1)
+		git branch branch-b
+		git checkout branch-a
+		git rm hello.rb
+		git commit -m "removed hello.rb from branch-a"
+		git checkout branch-b
+		git rm hello.rb
+		git commit -m "removed hello.rb from branch-b"
+		git checkout master
+		git merge branch-a
+		git checkout branch-b
+		git merge master
+
+	Sample Output:
+
+		Switched to branch 'master'
+		Updating ecf05f4..2d6b82e
+		Fast forward
+		 hello.rb |    6 ------
+		 1 files changed, 0 insertions(+), 6 deletions(-)
+		 delete mode 100755 hello.rb
+		Switched to branch 'branch-b'
+		Merge made by recursive.	<<<< IMPORTANT
+
+[9] Deletion in one branch, change in other, and merge through trunk to alternate branch
+
+        (1,B=T),Ad,B1,Ad->Td,Td->B1
+
+        Criteria:
+
+        * System should demand an interactive merge.
+
+	Test Regimen:
+
+		(1)
+		git branch branch-b
+		git checkout branch-a
+		git rm hello.rb
+		git commit -m "removed hello.rb from branch-a"
+
+		# this section is different than in test 8
+		git checkout branch-b
+		sed -i "s/hello world/hello mundo/g" hello.rb
+		git add hello.rb
+		git commit -m "changed to hello mundo"
+
+		git checkout master
+		git merge branch-a
+		git checkout branch-b
+		git merge master
+
+	Sample Output:
+
+		Switched to branch 'master'
+		Updating c3f8806..04105b1
+		Fast forward
+		 hello.rb |    6 ------
+		 1 files changed, 0 insertions(+), 6 deletions(-)
+		 delete mode 100755 hello.rb
+		Switched to branch 'branch-b'
+		CONFLICT (delete/modify): hello.rb deleted in master and modified in HEAD. Version HEAD of hello.rb left in tree.
+		Automatic merge failed; fix conflicts and then commit the result.   <<<< IMPORTANT
+
+	Further output from merging the delete:
+
+		# On branch branch-b                                                                                             
+		# Changed but not updated:                                                                                       
+		#   (use "git add <file>..." to update what will be committed)                                                   
+		#   (use "git checkout -- <file>..." to discard changes in working directory)
+		#
+		#       unmerged:   hello.rb
+		#
+		no changes added to commit (use "git add" and/or "git commit -a")
+		rbuck@SOIM0429:~/Desktop/Stuff/git-test/CentOS/test-scripts/hello.git$ git mergetool hello.rb
+		
+		Deleted merge conflict for 'hello.rb':
+		  {local}: modified
+		  {remote}: deleted
+		Use (m)odified or (d)eleted file, or (a)bort? d
+		rbuck@SOIM0429:~/Desktop/Stuff/git-test/CentOS/test-scripts/hello.git$ git status
+		# On branch branch-b
+		# Changes to be committed:
+		#   (use "git reset HEAD <file>..." to unstage)
+		#
+		#       deleted:    hello.rb
+		#
+		rbuck@SOIM0429:~/Desktop/Stuff/git-test/CentOS/test-scripts/hello.git$ git commit -m "merged delete"
+		[branch-b 89e3b13] merged delete
+
+
+[10] Cross-Branch Copying and Integration
+
+        (1,B=T),A1,A1->B1,A1->T1,B1->T1'
+
+        Criteria:
+
+        * System should not require an interactive merge during the merge from B1->T1' (no effective change)
+          nor during the snap from trunk to the branch just prior to the merge to trunk.
+
+	Test Regimen:
+
+		(1)
+		git branch branch-b
+		git checkout branch-a
+		sed -i "s/hello world/hello mundo/g" hello.rb
+		git add hello.rb
+		git commit -m "changed to hello mundo"
+		git checkout branch-b
+		git merge branch-a
+		git checkout master
+		git merge branch-a
+		git merge branch-b
+
+	Sample Output:
+
+		Switched to branch 'branch-b'
+		Updating d495831..d39b304
+		Fast forward
+		 hello.rb |    2 +-
+		 1 files changed, 1 insertions(+), 1 deletions(-)
+		Switched to branch 'master'
+		Updating d495831..d39b304
+		Fast forward
+		 hello.rb |    2 +-
+		 1 files changed, 1 insertions(+), 1 deletions(-)
+		Already up-to-date.    <<<< IMPORTANT
+
+[11] Cross-Branch Copying and Integration
+
+        (1,B=T),A1,A1->B1,A2,A2->T1,T1->B2,B2->T2
+
+        Criteria:
+
+        * System should not require an interactive merge during the merge from B1->T1' (no effective change)
+          nor during the snap from trunk to the branch just prior to the merge to trunk.
+
+	Test Regimen:
+
+		(1)
+		git branch branch-b
+		git checkout branch-a
+		sed -i "s/hello world/hello mundo/g" hello.rb
+		git add hello.rb
+		git commit -m "changed to hello mundo"
+		git checkout branch-b
+		git merge branch-a
+		git checkout branch-a
+		sed -i "s/hello mundo/hola mundo/g" hello.rb
+		git add hello.rb
+		git commit -m "changed to hola mundo"
+		git checkout master
+		git merge branch-a
+		git checkout branch-b
+		git merge master
+		git checkout master
+		git merge branch-b
+
+	Sample Output:
+
+		Switched to branch 'branch-b'
+		Updating a260931..278bcdd
+		Fast forward
+		 hello.rb |    2 +-
+		 1 files changed, 1 insertions(+), 1 deletions(-)
+		Switched to branch 'branch-a'
+		[branch-a 1f0788f] changed to hola mundo
+		 1 files changed, 1 insertions(+), 1 deletions(-)
+		Switched to branch 'master'
+		Updating a260931..1f0788f
+		Fast forward
+		 hello.rb |    2 +-
+		 1 files changed, 1 insertions(+), 1 deletions(-)
+		Switched to branch 'branch-b'
+		Updating 278bcdd..1f0788f
+		Fast forward
+		 hello.rb |    2 +-
+		 1 files changed, 1 insertions(+), 1 deletions(-)
+		Switched to branch 'master'
+		Already up-to-date.	      <<<< IMPORTANT
+
+	Log Information:
+
+		rbuck@SOIM0429:~/Desktop/Stuff/git-test/CentOS/test-scripts/hello.git$ git log hello.rb
+		commit 1f0788f398437cca50aee7b3d9727c63e7d87963
+		Author: Full Name <full.name@company.com>
+		Date:   Wed Apr 21 14:43:51 2010 -0400
+		
+		    changed to hola mundo
+		
+		commit 278bcdd9a700299f07b1b4f3e4fe98bd556d37bb
+		Author: Full Name <full.name@company.com>
+		Date:   Wed Apr 21 14:43:51 2010 -0400
+		
+		    changed to hello mundo
+		
+		commit a2609317e3d9527ffe7abc00b76c3b85af9f680d
+		Author: Full Name <full.name@company.com>
+		Date:   Wed Apr 21 14:43:51 2010 -0400
+		
+		    initial repository
+
+[12] Move versus change
+
+        (1,B=T),A1,Bm,B2->T1,T1->A2
+
+        Criteria:
+
+        * System should not require an interactive merge during the merge from T1->A2.
+	  Furthermore, the tool should be able to track the move of a file and merge
+	  the change into the new location. (no effective change)
+
+	Test Regimen:
+
+		mkdir hello.git
+		cd hello.git
+		git init
+		mkdir one
+		cp ../hello.rb one/hello.rb
+		git add one/hello.rb
+		git commit -m "initial repository"
+		
+		git branch branch-a
+		git branch branch-b
+		
+		git checkout branch-a
+		sed -i "s/hello world/hello mundo/g" one/hello.rb
+		git add one/hello.rb
+		git commit -m "changed to hello mundo"
+		
+		git checkout branch-b
+		git mv one/ two/
+		git commit -m "refactored"
+		git checkout master
+		git merge branch-b
+		git checkout branch-a
+		git merge master
+
+	Sample Output:
+
+		Switched to branch 'master'                                                                               
+		Updating 56bd086..8a230c3                                                                                 
+		Fast-forward                                                                                              
+		 {one => two}/hello.rb |    0                                                                             
+		 1 files changed, 0 insertions(+), 0 deletions(-)
+		 rename {one => two}/hello.rb (100%)  <<<< IMPORTANT
+		Switched to branch 'branch-a'
+		Merge made by recursive.
+		 {one => two}/hello.rb |    0
+		 1 files changed, 0 insertions(+), 0 deletions(-)
+		 rename {one => two}/hello.rb (100%)  <<<< IMPORTANT
+
+[13] Similar to the Modify and Move Directory Test, this Modifies and Moves File
+
+        (1,B=T),A1,Bm,B2->T1,T1->A2
+
+        Criteria:
+
+        * System should not require an interactive merge during the merge from T1->A2.
+	  Furthermore, the tool should be able to track the move of a file and merge
+	  the change into the new location. (no effective change)
+
+	Test Regimen:
+
+		(1)
+		git branch branch-b
+		git checkout branch-a
+		sed -i "s/hello world/hello mundo/g" hello.rb
+		git add hello.rb
+		git commit -m "changed to hello mundo"
+		git checkout branch-b
+		git mv hello.rb hola.rb
+		git commit -m "refactored"
+		git checkout master
+		git merge branch-b
+		git checkout branch-a
+		git merge master
+
+	Sample Output:
+
+		Switched to branch 'master'
+		+ git merge branch-b
+		Updating 8414f56..6c95d13
+		Fast-forward
+		 hello.rb => hola.rb |    0
+		 1 files changed, 0 insertions(+), 0 deletions(-)
+		 rename hello.rb => hola.rb (100%)
+		+ git checkout branch-a
+		Switched to branch 'branch-a'
+		+ git merge master
+		Merge made by recursive.
+		 hello.rb => hola.rb |    0
+		 1 files changed, 0 insertions(+), 0 deletions(-)
+		 rename hello.rb => hola.rb (100%)
+		+ cd ..
+
+[14] Perform cases 1-5 with meta-data changes, tags, or the like. This test case should have same success criteria.
+

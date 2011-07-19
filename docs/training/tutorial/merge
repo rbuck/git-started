@@ -1,0 +1,42 @@
+#!/bin/sh -v
+
+# This training session covers typical daily commands used by developers.
+# These commands illustrate a change initiated by a developer which is later
+# pushed to the remote repository, but here the developer is must resolve
+# a merge conflict.
+#
+# What you will learn in this training session:
+#
+#  - status
+#  - diff
+#  - diff --cached
+#  - commit
+#  - push
+#  - rebase and rebase --continue
+#  - gitk
+
+(
+  cd hb
+  echo "hello mundo" > README
+  git diff
+  git status
+  git add README 
+  git diff --cached
+  git status
+  git commit -m "world to mundo"
+  git status
+
+  git fetch
+  # cumulative changes in the remote branch since your last pull
+  git diff ...origin
+  git status
+  gitk
+  git rebase origin/master
+  git mergetool
+  git status
+  rm README.orig 
+  git rebase --continue
+  git status
+  cat README 
+  git push
+)

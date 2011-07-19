@@ -1,0 +1,34 @@
+Subject: Installation of Git on RedHat/CentOS 5.4 or Later
+From: Robert Buck
+Date: 2011-07-19
+
+The script (install.sh) installs Git and all its dependencies on CentOS/Redhat
+version 5.4 or later. The script adds EPEL as a YUM repository, updates, and
+upgrades the system. Mileage may vary.
+
+Modify the script to not perform an update.
+
+This script will NOT install the latest version of Git, it will only install
+the version that was available at the time of the stable RedHat release.
+
+It is recommended that version 1.7.2 or later is installed, and this may be
+done from source code. See the source code directory for further instructions.
+
+However, if you wish to install using pre-built RPMs then some are available at
+the linux-kernel site, the key packages being 'git', 'gitk', 'git-email' and
+'git-gui':
+
+  http://www.kernel.org/pub/software/scm/git/RPMS/x86_64/
+
+-------------------------------------------------------------------------------
+Subject: Installation of Git on Ubuntu
+From: Robert Buck
+Date: 2011-07-19
+
+Latest packages are available for Ubuntu through a dedicated apt repository.
+Follow these instructions to install on Ubuntu specifically.
+
+  sudo add-apt-repository ppa:git-core/ppa
+  sudo apt-get update
+  sudo apt-get install git gitk
+

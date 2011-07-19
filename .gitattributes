@@ -1,0 +1,4 @@
+* text=auto
+*.xml eol=lf
+*.xsd eol=lf
+*.png -text

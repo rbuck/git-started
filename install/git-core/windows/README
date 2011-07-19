@@ -1,0 +1,215 @@
+-------------------------------------------------------------------------------
+Subject: Installing Git on Windows
+From: Robert Buck
+Date: 2010-05-07
+
+Installation Options
+
+There are a couple options for installing Git on Windows:
+
+  * cygwin
+
+  * mingw
+    - msysgit (for command line)
+    - gitextensions (for visual studio)
+    - tortoisegit (for windows explorer)
+    - smartgit (standalone gui)
+
+Prerequisites
+
+All options require that Putty be installed in order to generate SSH keys used
+by Git.
+
+Screen Scrapes Available
+
+While the cygwin option is undocumented, the other options are documented and
+screen-scrapes have been captured and provided in the images directory to aide
+those installing these tools.
+
+-------------------------------------------------------------------------------
+
+Putty
+
+Putty is required for access to public Git repositories; install this first
+using either an installer or simply the available zip file, from the following
+site:
+
+  http://www.chiark.greenend.org.uk/~sgtatham/putty/
+
+Install Putty to the following location so all the dev tools are kept in one
+common location:
+
+  c:\devtools\putty
+
+With both installation options the path to the Putty files must be added to
+the PATH in the user's environment in order for execution of putty on the
+command line to work.
+
+To access public repositories Putty will need to be downloaded and installed.
+You will need to generate an SSH key, and provide the private key to the tool
+of choice, and the public key to the Git hosted site.
+
+Use the puttygen.exe tool to generate a public and private key-pair, saving
+them to the .ssh directory located in the user-home directory.
+
+
+-------------------------------------------------------------------------------
+
+Cygwin
+
+Cygwin is a POSIX emulation layer that runs on Windows; it provides a setup
+utility to download and install packages not unlike apt-get, just a GUI form.
+
+When installing cygwin, it is suggested that packages are downloaded from
+prominent educational institutions, such as Georgia Tech; other sites may have
+limited bandwidth.
+
+Prior to installing any packages cycle through the install selection button
+till you return back to "skip"; this will effectively remove all packages from
+being installed. Then install versions 1.7.x or later; install the following
+packages:
+
+* git
+* git-completion
+* git-gui
+* gitk
+* vim
+
+The latest version of Git is available from cygwin and it works perfectly fine
+on Windows.
+
+Generate an SSH key using ssh-keygen per instructions on the web, and with
+other documentation provided in this packet. For cygwin, follow the standard
+instructions per Unix, putting SSH keys into ~/.ssh.:w
+
+
+-------------------------------------------------------------------------------
+
+Gitextensions (NOT RECOMMENDED)
+
+  http://code.google.com/p/gitextensions/
+
+Use Gitextensions version 1.9.2.
+
+GitExtensions is a plugin for VisualStudio 2008/2010 enabling all the basic
+features to work with Git repositories. This integration also requires Msys
+Git to be installed.
+
+The gitextensions plugin for Visual Studio only works provided you install it
+strictly following the installer options illustrated by the series of images
+provided herein. Do NOT vary from the default settings. The gitextensions
+plugin is NOT SCC compliant, so developers will not be able to interact with
+the IDE in the traditional sense of SCC.
+
+Provided the defaults are followed in the installation process, and Git/Msysgit
+is installed as part of the installation process, the system should work
+reasonably well and you will have all the bits required by SmartGit too.
+
+
+-------------------------------------------------------------------------------
+
+SmartGit
+
+SmartGit proovides a standalone GUI that supports Mac, Linux, and Windows. It
+requires Java, and a local installation of Git. On Windows SmartGit requires
+a copy of Git, and specifically suggests msysgit. When installing on Windows
+please specify the msysgit/cmd/git.cmd file as the git executable, and not
+git.exe. SmartGit will not recognize msysgit's git.exe as being valid. Other
+ports of Git may provide different results.
+
+SmartGit has reduced pricing for volume purchases; single licenses start at
+$69 and for purchases of 50 or more pricing drops to $39.
+
+
+-------------------------------------------------------------------------------
+
+TortoiseGit
+
+  http://code.google.com/p/tortoisegit/
+
+Use TortoiseGit version 1.4.4.0.
+
+TortoiseGit provides Windows Explorer integrations for Git similar to what is
+available for TortoiseCVS and TortoiseSVN. After installation completes the
+system will require a restart.
+
+Provided the above products are installed with all their defaults, and so long
+as TortoiseGit is installed with the defaults, all should work properly. Avoid
+departing from these instructions by installing non-defaults.
+
+Known Issues:
+
+1. You cannot delete a repository unless you first kill tgitcache.exe. You
+   will need to restart after you do your directory cleanup in order to restart
+   the tgitcache.exe process.
+
+
+-------------------------------------------------------------------------------
+!!! BELOW ARE ALTERNATIVES - EXPERIMENTAL DO NOT USE UNLESS REQUIRED !!!
+-------------------------------------------------------------------------------
+
+MinGW
+
+  http://www.mingw.org/
+
+Install MinGW with the gcc, g++, and make options checked; don't install the
+remaining components. The installation process should take about one minute
+and will succeed without much fanfare. One thing to note, the installation
+location should be in location whose path has no spaces; this will make it
+easiest to use and configure paths without having to use quotes. Add the
+MinGW bin directory to the system path.
+
+The tested location for MinGW was:
+
+  c:\devtools\mingw
+
+MinGW like Cygwin provides a compatibility layer for applications that were
+written primarily for Unix platforms; installing MinGW will take some time
+as lots of installable packages will be downloaded from SourceForge. During
+installation a GNU compiler will be automatically downloaded, and common
+packages automatically compiled.
+
+
+MsysGit
+
+The msysgit package provides a command line interface for Windows. The package
+prerequisites include MinGW.
+
+The msysgit installation package comes in two flavors, network install and
+full install (recommended). First download msysgit from the Google Code wesite
+then follow installation instructions below.
+
+  http://code.google.com/p/msysgit/
+
+During the installation process several packages will be downloaded from the
+web and compiled; the whole process may take as long as five minutes before
+it completes.
+
+N.B. the installation directory specified in the installer is the parent
+directory of the msysgit installation; if you specify the c:\msysgit default
+then the actual location of msysgit will be c:\msysgit\msysgit. Some may find
+this annoying, so instead of using the default location the following location
+will provide a common directory for all dev tools:
+
+  c:\devtools
+
+Using this as the installation location for msysgit will automatically result
+in the following installation directory after msysgit installation completes:
+
+  c:\devtools\msysgit
+
+After installing both MinGW and msysgit you need to verify that your system
+path has the following appended to it:
+
+  C:\devtools\msysgit\bin;C:\devtools\mingw\bin;C:\devtools\msysgit
+
+Verify Git works by opening a shell prompt and execute the following commands:
+
+  > msys
+  > git --version
+
+Verify that the correct version of Git is printed out; if you see an error
+dialog complaining about libiconv2.dll missing, verify you first ran msys;
+otherwise uninstall both MinGW and msysgit, then repeat the installation
+procedure.
+

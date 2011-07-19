@@ -1,0 +1,71 @@
+Installing Git on Mac OS X
+
+There are three options for installing Git on Mac OS X:
+
+* build and install git and all its dependencies from source
+* install git using macports
+* install git using homebrew
+* install git using git-osx-installer
+
+-------------------------------------------------------------------------------
+
+Installing Git from Source
+
+In order to build and install Git from source code, first install MacPorts,
+then after installing asiidoc and xmlto run the script provided with this
+file.
+
+  sudo port install asciidoc xmlto
+
+Related instructions are available at the following site:
+
+  http://github.com/guides/compiling-and-installing-git-on-mac-os-x
+
+Mileage may vary. Zipped binary packages are available from Robert Buck upon
+request.
+
+A script to build all dependent packages exists at the following location:
+
+  install/git-core/unix/source
+
+-------------------------------------------------------------------------------
+
+Ports via Packaging Tools
+
+Two packaging tool systems exist out of the normal flow of install packages and
+the like for Macs: Homebrew and MacPorts. Both determine the dependencies for
+the tool you wish to install (like yum or apt-get) and both download sources
+then build the tools incrementally, installing them to /usr/local. Both require
+XCode to be installed, which ships with it the GNU compiler collection.
+
+Detailed regarding these install procedures may be found at:
+
+  http://help.github.com/mac-git-installation/
+
+Homebrew
+
+  http://github.com/mxcl/homebrew
+
+Currently Homebrew supports Git 1.7.1. To install Git using Homebrew run the
+following command:
+
+  brew install git  
+
+MacPorts
+
+  http://www.macports.org/
+
+Currently MacPorts supports Git 1.7.1. To install git, after MacPorts is
+installed run the following command:
+
+  sudo port install git-core
+
+-------------------------------------------------------------------------------
+
+Installing Git using an OS X Installer
+
+A Mac OS X installer is available from the following site. Run the installer
+to install the packages.
+
+  http://code.google.com/p/git-osx-installer/
+

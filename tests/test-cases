@@ -1,0 +1,142 @@
+==============================================================
+
+
+References
+
+[1] http://progit.org/2010/03/08/rerere.html (hello world in ruby test case)
+[2] http://mercurial.selenic.com/wiki/GitConcepts (has a table of the command names and how they compare between the two systems. Strategim	
+
+-------------------------------------------
+Test Cases
+
+We will be using the Hello World ruby file example from the rerere documentation above.
+
+Nomenclature (hope this helps you understand the use cases):
+
+T     :: trunk
+A     :: branch a
+B     :: branch b
+Xn    :: n-th change on repository X
+(n,*) :: repeat steps from test case n
+B=T   :: create a branch B from trunk T
+M->N  :: merge from M to N
+
+Use Cases:
+
+[1] Create a branch from trunk:
+
+        T,A=T
+
+        Criteria:
+
+        * None
+
+[2] Merge simple change from trunk to branch:
+
+        (1),T1,T1->A1
+
+        Criteria:
+
+        * No interactive merge required
+
+[3] Merge simple change from branch to trunk
+
+        (1),A1,A1->T1
+
+        Criteria:
+
+        * No interactive merge required
+
+[4] Merge simple change from branch to trunk, and then to alternate branch
+
+        (1,B=T),A1,A1->T1,T1->B1
+
+        Criteria:
+
+        * No interactive merge required
+
+[5] Merge simple change from branch to trunk, then to alternate branch, then lastly alternate branch to trunk
+
+        (4),B1->T1
+
+        Criteria:
+
+        * No interactive merge required
+        * Empty merge (or no merge required) from alternate branch to trunk
+
+[6] Non-conflicting identical simultaneous changes and merge (auto-resolve), A1 & B1 same
+
+        (1,B=T),A1,A1->T1,B1,T1->B1
+        (1,B=T),A1,A1->T1,B1,B1->T1
+
+        Criteria:
+
+        * No interactive merge required at last merge, should identify this as an auto-resolve candidate
+
+[7] Conflicting simultaneous changes and merge (guided-resolve), A1 & B1 different
+
+        (1,B=T),A1,A1->T1,B1,T1->B1
+        (1,B=T),A1,A1->T1,B1,B1->T1
+
+        Criteria:
+
+		* Interactive merge required at last merge
+
+[8] Deletion in both branches individually, and merge through trunk to alternate branch
+
+        (1,B=T),Ad,Bd,Ad->Td,Td->Bd
+
+        Criteria:
+
+        * System should auto-resolve without conflicts.
+
+[9] Deletion in one branch, change in other, and merge through trunk to alternate branch
+
+        (1,B=T),Ad,B1,Ad->Td,Td->B1
+
+        Criteria:
+
+        * System should demand an interactive merge.
+
+[10] Cross-Branch Copying and Integration
+
+        (1,B=T),A1,A1->B1,A1->T1,B1->T1'
+
+        Criteria:
+
+        * System should not require an interactive merge during the merge from B1->T1' (no effective change)
+          nor during the snap from trunk to the branch just prior to the merge to trunk.
+
+[11] Cross-Branch Copying and Integration
+
+        (1,B=T),A1,A1->B1,A2,A2->T1,T1->B2,B2->T2
+
+        Criteria:
+
+        * System should not require an interactive merge during the merge from B1->T1' (no effective change)
+          nor during the snap from trunk to the branch just prior to the merge to trunk.
+
+[12] Move versus change
+
+        (1,B=T),A1,Bm,B2->T1,T1->A2
+
+        Criteria:
+
+        * System should not require an interactive merge during the merge from T1->A2.
+	  Furthermore, the tool should be able to track the move of a file and merge
+	  the change into the new location. (no effective change)
+
+[13] Similar to the Modify and Move Directory Test, this Modifies and Moves File
+
+        (1,B=T),A1,Bm,B2->T1,T1->A2
+
+        Criteria:
+
+        * System should not require an interactive merge during the merge from T1->A2.
+	  Furthermore, the tool should be able to track the move of a file and merge
+	  the change into the new location. (no effective change)
+
+[14] Perform cases 1-5 with meta-data changes, tags, or the like. This test case should have same success criteria.
+
+	TBD
+
