@@ -40,6 +40,7 @@ fi
 
 # a nice feature, but there's some disagreement about it:
 git config --global rerere.enabled true
+git config --global branch.autosetuprebase always
 
 git config --global core.autocrlf false
 git config --global log.date iso
